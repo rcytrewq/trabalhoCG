@@ -289,6 +289,25 @@ function createStabilizer(){
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+///////////////////////////// CREATE STABILIZER ///////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+function createFlaps(){
+  // create first cube
+  var cubeGeometry = new THREE.BoxGeometry(0.5, 1.5, 18);
+  var cubeMaterial = new THREE.MeshNormalMaterial();
+  cubeGeometry.rotateY(degreesToRadians(90));
+
+;  var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+  // position the first cube
+  cube.position.set(-14.0, -1.5, 51.25);
+  cube.rotateY(degreesToRadians(7));
+  cube.rotateZ(degreesToRadians(-3.5));
+  // add the fisrt cube to the scene
+  return cube;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////// AIRPLANE ASSEMBLY ///////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -310,7 +329,8 @@ airplane.add(cockpit);
 var stabilizer = createStabilizer();
 stabilizer.position.set(0.5,-17.065,3.5)
 airplane.add(stabilizer);
-
+var flap = createFlaps();
+scene.add(flap);
 airplane.position.set(0,0,50);
 
 
