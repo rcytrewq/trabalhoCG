@@ -332,7 +332,7 @@ airplane.add(stabilizer);
 var flap = createFlaps();
 scene.add(flap);
 airplane.position.set(0,0,50);
-
+console.log("oi");
 
 var angle = 0;
 var speed = 0.15;
