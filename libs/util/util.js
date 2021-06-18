@@ -88,6 +88,7 @@ export function getMaxSize(obj)
     this.infoBox.style.textAlign = "left";
   }
 
+  
   addParagraph() {
     const paragraph = document.createElement("br")
     this.infoBox.appendChild(paragraph);              ;
@@ -101,6 +102,38 @@ export function getMaxSize(obj)
 
   show() {
     document.body.appendChild(this.infoBox);
+  }
+}
+
+export class InfoBox2 {
+  constructor() {
+    this.infoBox2 = document.createElement('div');
+    this.infoBox2.id = "InfoxBox";
+    this.infoBox2.style.padding = "6px 14px";
+    this.infoBox2.style.position = "fixed";
+    this.infoBox2.style.bottom = "0";
+    this.infoBox2.style.left = "0";
+    this.infoBox2.style.backgroundColor = "rgba(255,255,255,0.2)";
+    this.infoBox2.style.color = "white";
+    this.infoBox2.style.fontFamily = "sans-serif";
+    this.infoBox2.style.userSelect = "none";
+    this.infoBox2.style.textAlign = "left";
+  }
+
+  
+  addParagraph() {
+    const paragraph = document.createElement("br")
+    this.infoBox2.appendChild(paragraph);              ;
+  }
+
+  add(text) {
+    var textnode = document.createTextNode(text);
+    this.infoBox2.appendChild(textnode);
+    this.addParagraph();
+  }
+
+  show() {
+    document.body.appendChild(this.infoBox2);
   }
 }
 
