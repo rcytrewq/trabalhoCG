@@ -11,20 +11,35 @@ import {initRenderer,
 // To use the keyboard
 var keyboard = new KeyboardState(); 
 
-var angle2 = 0;
-var speed = 0.15;
+var propellerAngle = 0.00;
+var rotateAngle = 0.00;
+var speed = 0.00;
 var animation = true;
+
+var rotateIncrease = 0.001;
 export function rotatePropeller(propeller){
     
 
     propeller.matrixAutoUpdate = false;
     propeller.matrix.identity();
     if (animation){
-        angle2 += speed;
+        propellerAngle += speed;
         var mat4 = new THREE.Matrix4();
         propeller.matrix.multiply(mat4.makeTranslation(0.0, 23.5, 0.0))
-        propeller.matrix.multiply(mat4.makeRotationY(-angle2)); // R1
+        propeller.matrix.multiply(mat4.makeRotationY(-propellerAngle)); // R1
     }
+ }
+
+ export function movement(airplane, leftelevator, rightelevator, leftaileron, rightaileron, rudder){
+  airplane.translateY(speed);
+  if (rotateAngle>0){
+    rotateAngle-=rotateIncrease;
+    airplane.rotateY(rotateIncrease);
+    leftaileron.rotateX(-rotateIncrease);
+    leftaileron.translateZ(0.0005);
+    rightaileron.rotateX(-rotateIncrease);
+    rightaileron.translateZ(0.0005);
+  }
  }
 
  var angleRD = 0.0;
@@ -46,10 +61,13 @@ export function keyboardUpdate(airplane, leftelevator, rightelevator, leftailero
   var rotAxis2 = new THREE.Vector3(0,1,0); // Set Y axis
   var rotAxis3 = new THREE.Vector3(0,0,1); // Set Z axis
 
-  
-  if ( keyboard.pressed("space")){ 
-    airplane.translateY(0.5);
+   
+  if ( keyboard.pressed("Q")){ 
+    if(speed<=1) speed+=0.005;
   }  
+  if ( keyboard.pressed("A")){ 
+    if(speed>0.0) speed-=0.005;
+  } 
 
   if ( keyboard.pressed("down")) {
     airplane.rotateX(angle);
@@ -69,18 +87,19 @@ export function keyboardUpdate(airplane, leftelevator, rightelevator, leftailero
   }
 
   if ( keyboard.pressed("left")) {
-    airplane.rotateY(-angle);
-    leftaileron.rotateX(0.001);
+    rotateAngle+=rotateIncrease;
+    airplane.rotateY(-rotateIncrease);
+    leftaileron.rotateX(rotateIncrease);
     leftaileron.translateZ(-0.0005);
-    rightaileron.rotateX(0.001);
+    rightaileron.rotateX(rotateIncrease);
     rightaileron.translateZ(-0.0005);
   }
 
   if ( keyboard.pressed("right")) {
     airplane.rotateY(angle);
-    leftaileron.rotateX(-0.001);
+    leftaileron.rotateX(-rotateIncrease);
     leftaileron.translateZ(0.0005);
-    rightaileron.rotateX(-0.001);
+    rightaileron.rotateX(-rotateIncrease);
     rightaileron.translateZ(0.0005);
   }
 
@@ -97,5 +116,12 @@ export function keyboardUpdate(airplane, leftelevator, rightelevator, leftailero
     rudder.translateZ(0.0002);
     
   }
-
+  
+  return {speed, rotateAngle};
+  // Use this to show information onscreen
+  // var controls = new InfoBox();
+  // controls.add("Information");
+  // controls.addParagraph();
+  // controls.add("Speed: ${speed}");
+  
 }

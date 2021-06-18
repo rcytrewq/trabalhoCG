@@ -18,13 +18,15 @@ import {createFuselage,
         createLandingGear, 
         createElevator} from "./planeParts.js";
 import {rotatePropeller,
-        keyboardUpdate} from "./animations.js"
+        keyboardUpdate,
+        movement} from "./animations.js"
 
 var stats = new Stats();          // To show FPS information
 var scene = new THREE.Scene();    // Create main scene
 var renderer = initRenderer();    // View function in util/utils
 
-  
+var speed = 0.00;
+var rotateAngle = 0.00;
 
 //main camera
 var camera = initCamera(new THREE.Vector3(-110, 0, 160)); // Init camera in this position
@@ -45,6 +47,12 @@ initDefaultBasicLight(scene);
 var plane = createGroundPlaneWired(800,800, 10, 10, "rgb(0,100,0)");
 plane.rotateX(degreesToRadians(90));
 scene.add(plane);
+
+// Use TextureLoader to load texture files
+var textureLoader = new THREE.TextureLoader();
+var grass = textureLoader.load('../assets/textures/grass.jpg');
+
+plane.material.map = grass;
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -129,7 +137,9 @@ var controls = new InfoBox();
   controls.add("* Left button to rotate");
   controls.add("* Right button to translate (pan)");
   controls.add("* Scroll to zoom in/out.");
+  controls.addParagraph();
   controls.show();
+
 
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
@@ -140,7 +150,14 @@ function render()
   stats.update(); // Update FPS
   trackballControls.update(); // Enable mouse movements
   rotatePropeller(propeller);
-  keyboardUpdate(airplane, leftelevator, rightelevator, leftaileron, rightaileron, rudder);
+  
+  speed= keyboardUpdate(airplane, leftelevator, rightelevator, leftaileron, rightaileron, rudder).speed;
+  rotateAngle= keyboardUpdate(airplane, leftelevator, rightelevator, leftaileron, rightaileron, rudder).rotateAngle;
+  movement(airplane, leftelevator, rightelevator, leftaileron, rightaileron, rudder);
+  var vel = new InfoBox()
+    vel.add("Speed: "+speed.toFixed(3))
+    vel.add("Rotate Angle: "+rotateAngle.toFixed(3))
+    vel.show();
   requestAnimationFrame(render);
   renderer.render(scene, camera) // Render scene
 }
