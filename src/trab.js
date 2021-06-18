@@ -7,8 +7,10 @@ import {initRenderer,
         InfoBox,
         onWindowResize,
         degreesToRadians,
+        radiansToDegrees,
         initDefaultBasicLight,
-        createGroundPlaneWired} from "../libs/util/util.js";
+        createGroundPlaneWired,
+        InfoBox2} from "../libs/util/util.js";
 import {createFuselage,
         createWings,
         createCockpit,
@@ -26,10 +28,12 @@ var scene = new THREE.Scene();    // Create main scene
 var renderer = initRenderer();    // View function in util/utils
 
 var speed = 0.00;
-var rotateAngle = 0.00;
+var rollAngle = 0.00;
+var pitchAngle = 0.00;
+var altitude = 0.00;
 
 //main camera
-var camera = initCamera(new THREE.Vector3(-110, 0, 160)); // Init camera in this position
+var camera = initCamera(new THREE.Vector3(-250, 0, 100)); // Init camera in this position
 camera.up.set(0, 0, 1);
 scene.background = new THREE.Color("rgb(255,255,255)");
 
@@ -44,7 +48,7 @@ scene.add( axesHelper );
 initDefaultBasicLight(scene);
 
 // create the ground plane
-var plane = createGroundPlaneWired(800,800, 10, 10, "rgb(0,100,0)");
+var plane = createGroundPlaneWired(1500,1500, 10, 10, "rgb(0,100,0)");
 plane.rotateX(degreesToRadians(90));
 scene.add(plane);
 
@@ -106,7 +110,7 @@ rudder.rotateY(degreesToRadians(90));
 rudder.rotateZ(degreesToRadians(-2));
 rudder.position.set(-0.5,-3,2.5);
 stabilizer.add(rudder);
-airplane.position.set(0,0,50);
+airplane.position.set(0,0,9.6);
 
 var frontLandingGear = createLandingGear();
 var leftLandingGear = createLandingGear();
@@ -126,7 +130,7 @@ rightLandingGear.rotateX(degreesToRadians(-15));
 rightLandingGear.rotateZ(degreesToRadians(15));
 airplane.add(rightLandingGear);
 
-
+airplane.rotateZ(degreesToRadians(-90));
 
 
 // Use this to show information onscreen
@@ -151,12 +155,17 @@ function render()
   trackballControls.update(); // Enable mouse movements
   rotatePropeller(propeller);
   
-  speed= keyboardUpdate(airplane, leftelevator, rightelevator, leftaileron, rightaileron, rudder).speed;
-  rotateAngle= keyboardUpdate(airplane, leftelevator, rightelevator, leftaileron, rightaileron, rudder).rotateAngle;
+  speed= keyboardUpdate(airplane, leftelevator, rightelevator, leftaileron, rightaileron, rudder).speedOnScreen;
+  rollAngle= keyboardUpdate(airplane, leftelevator, rightelevator, leftaileron, rightaileron, rudder).rollAngle;
+  pitchAngle= keyboardUpdate(airplane, leftelevator, rightelevator, leftaileron, rightaileron, rudder).pitchAngle;
+  altitude= keyboardUpdate(airplane, leftelevator, rightelevator, leftaileron, rightaileron, rudder).altitude;
   movement(airplane, leftelevator, rightelevator, leftaileron, rightaileron, rudder);
-  var vel = new InfoBox()
-    vel.add("Speed: "+speed.toFixed(3))
-    vel.add("Rotate Angle: "+rotateAngle.toFixed(3))
+  var vel = new InfoBox2();
+    
+    vel.add("Speed: "+speed+" kt")
+    vel.add("Rotate Angle: "+radiansToDegrees(rollAngle).toFixed(2)+"º");
+    vel.add("Pitch Angle: "+radiansToDegrees(pitchAngle).toFixed(2)+"º");
+    vel.add("Altitude: "+altitude.toFixed(2)+"º");
     vel.show();
   requestAnimationFrame(render);
   renderer.render(scene, camera) // Render scene
