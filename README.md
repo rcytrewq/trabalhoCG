@@ -5,4 +5,4 @@ The basic projects that support the course can be obtained at [this link](https:
 
 * [project](https://rcytrewq.github.io/trabalhoCG/src/main.html)
 
-* [src](https://github.com/rcytrewq/trabalhoCG/blob/src/)
+* [src](https://github.com/rcytrewq/trabalhoCG/tree/main/src)
