@@ -96,7 +96,7 @@ export class InfoBox {
   }
 
   hide() {
-    document.body.removeChild(this.infoBox);
+    document.body.delete();
   }
 }
 
@@ -108,8 +108,8 @@ export class InfoBox2 {
     this.infoBox2.style.position = "fixed";
     this.infoBox2.style.bottom = "0";
     this.infoBox2.style.left = "0";
-    this.infoBox2.style.backgroundColor = "rgba(255,255,255,0.2)";
-    this.infoBox2.style.color = "white";
+    this.infoBox2.style.backgroundColor = "white";
+    this.infoBox2.style.color = "black";
     this.infoBox2.style.fontFamily = "sans-serif";
     this.infoBox2.style.userSelect = "none";
     this.infoBox2.style.textAlign = "left";
@@ -130,7 +130,7 @@ export class InfoBox2 {
     document.body.appendChild(this.infoBox2);
   }
   hide() {
-    document.body.removeChild(this.infoBox2);
+    document.body.delete();
   }
 }
 

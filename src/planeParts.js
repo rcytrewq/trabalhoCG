@@ -10,7 +10,7 @@ import {initRenderer,
         initDefaultBasicLight} from "../libs/util/util.js";
 
 
-export function createFuselage(scene){
+export function createFuselage(cube){
 
     var fuselageMaterial = new THREE.MeshPhongMaterial({
       color:'rgb(100,0,255)',
@@ -27,8 +27,8 @@ export function createFuselage(scene){
     var fuselage = new THREE.Mesh(fuselageBodyGeometry, fuselageMaterial);
   
     // add the fuselage body to the scene
-    fuselage.position.set(0, -24, 10);
-    scene.add(fuselage);
+    //fuselage.position.set(0, 0, 10);
+    cube.add(fuselage);
   
     // create cockpit base
     var cockpitBaseGeometry = new THREE.CylinderGeometry(4.5, 5.5, 7,32);
@@ -62,7 +62,7 @@ export function createFuselage(scene){
     fuselageBack.position.set(0.0, -19.5, 0);
     fuselage.add(fuselageBack);
   
-    fuselage.position.set(0,0,0);
+    // fuselage.translateX(50);
     return fuselage;
   }
 
@@ -115,14 +115,22 @@ export function createFuselage(scene){
     return {leftWing, rightWing};
   }
 
-  export function createCockpit(scene){
+  export function createCockpit(cube){
 
     // create cockpit
     var cockpitGeometry = new THREE.CylinderGeometry(2.5, 2.5, 5,32);
     var cockpitMaterial = new THREE.MeshPhongMaterial({
-      color:'rgb(255,255,255)',
-      //emissive:'0x0',
-      specular:'0x111111',
+      
+      transparent:true,
+      opacity: 0.33,
+      depthTest: true,
+      depthWrite: true,
+      alphaTest: 0,
+      visible: true,
+      side: THREE.frontSide,
+      color:'rgb(92,86,92)',
+      emissive:'0x0',
+      specular:'0xffffff',
       shininess:57,
       flatShading:true,
       reflectivity:1,
@@ -132,14 +140,21 @@ export function createFuselage(scene){
   
     // add the cockpit to the scene
     cockpit.position.set(0, 0, 0);
-    scene.add(cockpit);
+    cube.add(cockpit);
   
     //add spheres to the cockpit
     var sphereGeometry = new THREE.SphereGeometry(2.5, 32, 32);
     var sphereMaterial = new THREE.MeshPhongMaterial({
-      color:'rgb(255,255,255)',
-      //emissive:'0x0',
-      specular:'0x111111',
+      transparent:true,
+      opacity: 0.33,
+      depthTest: true,
+      depthWrite: true,
+      alphaTest: 0,
+      visible: true,
+      side: THREE.frontSide,
+      color:'rgb(92,86,92)',
+      emissive:'0x0',
+      specular:'0xffffff',
       shininess:57,
       flatShading:true,
       reflectivity:1,
@@ -158,7 +173,7 @@ export function createFuselage(scene){
     return cockpit;
   }
 
-  export function createPropeller(scene){
+  export function createPropeller(cube){
 
     // create propellerBase
     var propellerBaseGeometry = new THREE.CylinderGeometry(0, 1.5, 5,32);
@@ -176,7 +191,7 @@ export function createFuselage(scene){
   
     // add the propeller base to the scene
     propellerBase.position.set(0, 0, 0);
-    scene.add(propellerBase);
+    cube.add(propellerBase);
   
     // create propellers
     var propellerGeometry = new THREE.CylinderGeometry(0.05, 0.2, 10,4);
@@ -215,7 +230,7 @@ export function createFuselage(scene){
   }
  
   
-  export function createStabilizer(scene){
+  export function createStabilizer(cube){
     //create vertical stabilizer shape
   
     const vStabilizerShape = new THREE.Shape();
@@ -256,7 +271,7 @@ export function createFuselage(scene){
     //add the stabilizer base to the scene
   
     stabilizer.rotateX(degreesToRadians(1))
-    scene.add(stabilizer);
+    cube.add(stabilizer);
   
     //create horizontal stabilizer shape
     const hStabilizerShape = new THREE.Shape();
@@ -380,25 +395,26 @@ export function createFuselage(scene){
     protection.position.set(0,-4.75,0);
     lgear.add(protection);
   
-    var wheelGeometry = new THREE.CylinderGeometry(1,1,0.7,32,32)
-    var wheelMaterial = new THREE.MeshBasicMaterial({
-      color:'rgb(0,0,0)',
-      //emissive:'0x0',
-      specular:'0x111111',
-      shininess:57,
-      flatShading:true,
+    var wheelGeometry = new THREE.TorusGeometry(0.8,0.4, 32,32);
+    var wheelMaterial = new THREE.MeshLambertMaterial({
+      color:'rgb(30,30,30)',
+      emissive:'0x191414',
+      //specular:'0x111111',
+      // shininess:57,
+      // flatShading:true,
+      envMaps: 'reflection',
       reflectivity:1,
       refractionRatio:1,
       side:THREE.DoubleSide
     });
   
     var wheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
-    wheel.rotateZ(degreesToRadians(90));
+    wheel.rotateY(degreesToRadians(90));
     wheel.position.set(0.45,-5,0);
     lgear.add(wheel);
   
     var wheel2 = new THREE.Mesh(wheelGeometry, wheelMaterial);
-    wheel2.rotateZ(degreesToRadians(90));
+    wheel2.rotateY(degreesToRadians(90));
     wheel2.position.set(-0.45,-5,0);
     lgear.add(wheel2);
   

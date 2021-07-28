@@ -9,6 +9,7 @@ import {
   onWindowResize,
   degreesToRadians,
   initDefaultBasicLight,
+  radiansToDegrees
 } from "../libs/util/util.js";
 
 // To use the keyboard
@@ -18,6 +19,7 @@ var keyboard = new KeyboardState();
 var propellerAngle = 0.0;
 var rollAngle = 0.0;
 var pitchAngle = 0.0;
+var yawAngle = 0.0;
 
 //airplane speed
 var speed = 0.0;
@@ -26,40 +28,45 @@ var speed = 0.0;
 var animation = true;
 
 //
-var rollIncrease = 0.003;
-var pitchIncrease = 0.001;
-var increaseSpeed = 0.0005;
+var rollIncrease = 0.05;
+var pitchIncrease = 0.01;
+var yawIncrease = 0.02;
+var increaseSpeed = 0.005;
+
+
+var ZERO = 0.0000000000000000;
 
 function speedInKnots(speed) {
-  return (speed * 150).toFixed(1);
+  return (speed * 150).toFixed(2);
 }
-function rollLeft(angle, airplane, leftaileron, rightaileron, rudder) {
+function rollLeft(angle, airplane) {
   rollAngle += angle;
   airplane.rotateY(-angle);
-  leftaileron.rotateX(angle);
-  leftaileron.translateZ(-angle / 2.);
-  rightaileron.rotateX(angle);
-  rightaileron.translateZ(-angle / 2.);
-  // airplane.rotateZ(angle/3.);
-  // rudder.rotateX(angle/3.);
-  // rudder.translateZ(-angle/15.);
+  
 }
 
-function rotateRight(angle, airplane, leftaileron, rightaileron, rudder) {
-  rollLeft(-angle, airplane, leftaileron, rightaileron, rudder);
+function rollRight(angle, airplane) {
+  rollLeft(-angle, airplane);
 }
 
-function pitchUp(angle, airplane, leftelevator, rightelevator) {
-  pitchAngle += angle;
-  airplane.rotateX(angle);
-  leftelevator.rotateX(-angle / 10.);
-  leftelevator.translateZ(angle / 50.);
-  rightelevator.rotateX(-angle / 10.);
-  rightelevator.translateZ(angle / 50.);
+function yawLeft(angle, cube) {
+  yawAngle += angle;
+  cube.rotateY(angle);
+  
 }
 
-function pitchDown(angle, airplane, leftelevator, rightelevator) {
-  pitchUp(-angle, airplane, leftelevator, rightelevator);
+function yawRight(angle, cube) {
+  yawLeft(-angle, cube);
+}
+
+function pitchUp(angle, cube) {
+  pitchAngle -= angle;
+  cube.rotateX(-angle);
+  
+}
+
+function pitchDown(angle, cube) {
+  pitchUp(-angle, cube);
 }
 
 export function rotatePropeller(propeller) {
@@ -69,7 +76,7 @@ export function rotatePropeller(propeller) {
     propellerAngle += speed;
     var mat4 = new THREE.Matrix4();
     propeller.matrix.multiply(mat4.makeTranslation(0.0, 23.5, 0.0));
-    propeller.matrix.multiply(mat4.makeRotationY(-propellerAngle)); // R1
+    propeller.matrix.multiply(mat4.makeRotationY(propellerAngle)); // R1
   }
 }
 
@@ -79,26 +86,14 @@ export function movement(
   rightelevator,
   leftaileron,
   rightaileron,
-  rudder
+  rudder,
+  camera,
+  cube
 ) {
-  airplane.translateY(speed);
-
-  if (speed < 0.05 && airplane.getWorldPosition().z > 9.6) {
-    var dx = airplane.getWorldDirection().x >= 0 ? 0.1 : -0.5;
-    var dy = airplane.getWorldDirection().y >= 0 ? 0.1 : -0.1;
-    //console.log(k);
-    airplane.position.set(
-      airplane.getWorldPosition().x - dx,
-      airplane.getWorldPosition().y,
-      airplane.getWorldPosition().z -
-        0.05 * (50 / airplane.getWorldPosition().z)
-    );
-
-    //console.log(x[0], x[1], x[2]);
-    // airplane.position.set(worldToLocal((x,y,z-1)));
-    //pitchAngle-=0.03;
-  }
-  // always keep the angles between -360º and 360º
+  
+  cube.translateZ(speed*1000);
+  
+  //always keep the angles between -360º and 360º
   if (pitchAngle > 6.28319) pitchAngle -= 6.28;
   if (pitchAngle <= -6.28319) pitchAngle += 6.28;
 
@@ -107,99 +102,81 @@ export function movement(
 
   //reset residual angles
   if (
-    (pitchAngle > 0.00000 && pitchAngle < pitchIncrease) ||
-    (pitchAngle < 0.00000 && pitchAngle > -pitchIncrease)
+    (pitchAngle > ZERO && pitchAngle < pitchIncrease) ||
+    (pitchAngle < ZERO && pitchAngle > -pitchIncrease)
   )
-    pitchAngle = Math.trunc(pitchAngle);
+    pitchAngle = ZERO;
 
   if (
-    (rollAngle > 0.00000 && rollAngle < rollIncrease) ||
-    (rollAngle < 0.00000 && rollAngle > -rollIncrease)
+    (rollAngle > ZERO && rollAngle < rollIncrease) ||
+    (rollAngle < ZERO && rollAngle > -rollIncrease)
   )
-    rollAngle = 0.00000;
+    rollAngle = ZERO;
 
   if (speed < increaseSpeed) speed = 0;
 
   //auto return to horizontal
-  if (rollAngle > 0.00000) {
-    rotateRight(rollIncrease, airplane, leftaileron, rightaileron, rudder);
+  if (rollAngle > ZERO) {
+    rollRight(rollIncrease/2., airplane);
   }
-  if (rollAngle < 0.00000) {
-    rollLeft(rollIncrease, airplane, leftaileron, rightaileron, rudder);
+  if (rollAngle < ZERO) {
+     rollLeft(rollIncrease/2., airplane);
   }
-  if (pitchAngle > 0.00000) {
-    pitchDown(pitchIncrease, airplane, leftelevator, rightelevator);
+  if (pitchAngle > ZERO) {
+    pitchDown(-pitchIncrease/2., cube);
   }
-  if (pitchAngle < 0.000000) {
-    pitchUp(pitchIncrease, airplane, leftelevator, rightelevator);
+  if (pitchAngle < ZERO) {
+    pitchUp(-pitchIncrease/2., cube);
   }
+
 }
 
 var angleRD = 0.0;
 var vel = 0.0001;
 
 export function keyboardUpdate(
-  airplane,
-  leftelevator,
-  rightelevator,
-  leftaileron,
-  rightaileron,
-  rudder
+  cube,
+  airplane
 ) {
+ 
   keyboard.update();
 
-  var angle = 0.001;
-  //var angleRD = 0.01;//rudder angle
-  var angleRA = 0.01; //right aileron angle
-  var angleLA = 0.01; //left aileron angle
-  var angleRE = 0.01; //right elevator angle oi oio oi
-  var angleLE = 0.01; //left elevator angle
-
-  var rotAxis1 = new THREE.Vector3(1, 0, 0); // Set X axis
-  var rotAxis2 = new THREE.Vector3(0, 1, 0); // Set Y axis
-  var rotAxis3 = new THREE.Vector3(0, 0, 1); // Set Z axis
+  
 
   if (keyboard.pressed("Q")) {
-    if (speed <= 1) speed += increaseSpeed;
+    
+    if (speed <= 0.7){
+      
+      speed += increaseSpeed;
+      
+    }
   }
   if (keyboard.pressed("A")) {
     if (speed > 0.0) speed -= increaseSpeed / 1.5;
   }
 
-  if (keyboard.pressed("down")) {
-    pitchUp(pitchIncrease, airplane, leftelevator, rightelevator);
+  if (keyboard.pressed("down" ) /*&& pitchAngle >= degreesToRadians(-90)*/) {
+    pitchUp(pitchIncrease, cube);
   }
 
-  if (keyboard.pressed("up")) {
-    pitchDown(pitchIncrease, airplane, leftelevator, rightelevator);
+   if (keyboard.pressed("up") /*&& pitchAngle <= degreesToRadians(90)*/) {
+     pitchDown(pitchIncrease, cube);
+   }
+
+  if (keyboard.pressed("left") /*&& rollAngle <= degreesToRadians(90)*/) {
+    rollLeft(rollIncrease, airplane);
+    yawLeft(yawIncrease,cube);
+    //airplane.rotateZ(angle);
+    // camera.rotateZ(-10);
   }
 
-  if (keyboard.pressed("left")) {
-    rollLeft(rollIncrease, airplane, leftaileron, rightaileron, rudder);
+  if (keyboard.pressed("right") /*&& rollAngle >= degreesToRadians(-90)*/) {
+    rollRight(rollIncrease, airplane);
+    yawRight(yawIncrease, cube);
   }
 
-  if (keyboard.pressed("right")) {
-    rotateRight(rollIncrease, airplane, leftaileron, rightaileron, rudder);
-  }
-
-  // if (keyboard.pressed(",")) {
-  //   airplane.rotateZ(angle);
-  //   rudder.rotateX(0.001);
-  //   rudder.translateZ(-0.0002);
-  // }
-
-  // if (keyboard.pressed(".")) {
-  //   airplane.rotateZ(-angle);
-  //   rudder.rotateX(-0.001);
-  //   rudder.translateZ(0.0002);
-  // }
-
-  // if (keyboard.pressed("space")) {
-  //   airplane.translateZ(0.02);
-  // }
-
-  // return info to show on screen
+    
   var speedOnScreen = speedInKnots(speed);
-  var altitude = airplane.getWorldPosition().z - 9.6;
-  return { speedOnScreen, rollAngle, pitchAngle, altitude };
+  var altitude = (airplane.getWorldPosition().y - 2850)*0.01;
+  return ({ speedOnScreen, rollAngle, pitchAngle, altitude });
 }
