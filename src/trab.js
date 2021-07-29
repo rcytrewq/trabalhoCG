@@ -51,6 +51,19 @@ var keyboard2 = new KeyboardState();
 var simulationMode = true;
 var cockpitMode = false;
 
+
+// create the ground plane
+const geometryGround = new THREE.PlaneGeometry( mapSize*100, mapSize*100,100,100);
+geometryGround.translate(0.0, 0, 1200.0);
+//geometry.rotateX(1.5708); // To avoid conflict with the 
+const materialGround = new THREE.MeshBasicMaterial({color: 'rgb(180,180,180)', wireframe:true});
+const ground = new THREE.Mesh( geometryGround, materialGround );
+scene.add(ground);
+
+ground.rotateX(degreesToRadians(90));
+
+//scene.add(planeGround);
+//ground.translateX(-1500);
 /********************
   RENDER SETTINGS
 *********************/
@@ -364,7 +377,7 @@ function getRandomInt(min, max){
 function createVectors(){
   var airplaneInitialPosition = new THREE.Vector3(1.1*mapSize, 2200,-mapSize);
   var vectors = [];
-  var numberOfPoints = 13;
+  var numberOfPoints = 2;
 
   vectors.push(airplaneInitialPosition);
   for (let point = 0; point < numberOfPoints-1; point++) {
@@ -375,7 +388,7 @@ function createVectors(){
     vectors.push(vector);
     
   }
-  vectors.push(airplaneInitialPosition);
+  //vectors.push(airplaneInitialPosition);
   return vectors
 }
  var pointsPositions = createVectors();
@@ -405,27 +418,41 @@ const material = new THREE.LineBasicMaterial( { color : 0xff0000, linewidth: 2} 
 const curveObject = new THREE.Line( geometry, material );
 scene.add(curveObject);
 
-
+var clock = new THREE.Clock(false);
 var atual = 0;
 function namefunction(atual){
-  var clock = new THREE.Clock();
+  console.log(typeof(atual));
+  
+  score.innerText = (`Score: ${atual}`);
+  if(atual == "Fim de caminho") return atual;
+  //console.log(clock.getElapsedTime());
   if (cube.position.x >= checkPointsPositions[atual].x-5000 && cube.position.x <=checkPointsPositions[atual].x + 5000){
 
     if (cube.position.y >= checkPointsPositions[atual].y - 5000 && cube.position.y <= checkPointsPositions[atual].y + 5000){
       
       if (cube.position.z + 8000>=checkPointsPositions[atual].z - 5000 && cube.position.z + 8000 <= checkPointsPositions[atual].z + 5000){
-        
+        if (atual == 0){
+          clock.start();
+        }
         checkpoints[atual].visible=  false;
+        if (atual == checkpoints.length - 1){
+          clock.stop();
+          atual = "Fim de caminho";
+          return atual;
+        }
+        
         checkpoints[atual+1].visible = true;
         
-        if (atual == 0) clock.start();
-        if (atual == checkpoints.length - 1) clock.stop();
+        
         atual+=1;
       }
     }
   }
   return atual;
 }
+
+const timer = document.querySelector(".timer");
+const score = document.querySelector(".score");
 
 
 /********************
@@ -616,7 +643,7 @@ function loadBasePlane(mapSize)
   obj.clipShadows = true;
   
 
-  obj.scale.set(basePlaneScale,basePlaneScale/5,basePlaneScale);
+  obj.scale.set(basePlaneScale*100,basePlaneScale/5,basePlaneScale*100);
   obj.translateY(-1000);
 }, onProgress, onError);
 
@@ -770,12 +797,12 @@ function controlledRenderInspection(){
 
 
 function renderSimulation(){
-  
+  timer.innerText = (`Cronômetro: ${clock.getElapsedTime().toFixed(2)}`);
   airplane.visible = true;
   airplaneInspection.visible = false;
   renderer.clear();
   stats.update();
-  scene.background = new THREE.Color("rgb(220,220,220)");
+  scene.background = new THREE.Color("rgb(0,0,100)");
   axesHelper.visible = true;
   var infoOnScreen = new InfoBox2();
   trackballControls.update();

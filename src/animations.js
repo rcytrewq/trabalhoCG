@@ -163,14 +163,14 @@ export function keyboardUpdate(
      pitchDown(pitchIncrease, cube);
    }
 
-  if (keyboard.pressed("left") /*&& rollAngle <= degreesToRadians(90)*/) {
+  if (keyboard.pressed("left") && rollAngle <= degreesToRadians(60)) {
     rollLeft(rollIncrease, airplane);
     yawLeft(yawIncrease,cube);
     //airplane.rotateZ(angle);
     // camera.rotateZ(-10);
   }
 
-  if (keyboard.pressed("right") /*&& rollAngle >= degreesToRadians(-90)*/) {
+  if (keyboard.pressed("right") && rollAngle >= degreesToRadians(-60)) {
     rollRight(rollIncrease, airplane);
     yawRight(yawIncrease, cube);
   }
