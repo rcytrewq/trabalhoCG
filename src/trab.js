@@ -37,7 +37,6 @@ var stats = new Stats(); // To show FPS information
 var scene = new THREE.Scene();    // Create main scene
 scene.background = new THREE.Color('rgb(10,10,50)');
 
-
 // Create main scene
 var sceneInsp = new THREE.Scene();    // Create main scene
 sceneInsp.background = new THREE.Color('rgb(100,100,100)');
@@ -48,35 +47,23 @@ var mapSize = 70000;
 // To use the keyboard
 var keyboard2 = new KeyboardState();
 
-var simulationMode = true;
-var cockpitMode = false;
+var simulationMode = true; // Alterna entre os modos de simulação e inspeção
+var cockpitMode = false; // Ativa e desativa o modo cockpit
 
+const timer = document.querySelector(".timer"); //Show timer
+const score = document.querySelector(".score"); //Show score
 
-// create the ground plane
-const geometryGround = new THREE.PlaneGeometry( mapSize*100, mapSize*100,100,100);
-geometryGround.translate(0.0, 0, 1200.0);
-//geometry.rotateX(1.5708); // To avoid conflict with the 
-const materialGround = new THREE.MeshBasicMaterial({color: 'rgb(180,180,180)', wireframe:true});
-const ground = new THREE.Mesh( geometryGround, materialGround );
-scene.add(ground);
-
-ground.rotateX(degreesToRadians(90));
-
-//scene.add(planeGround);
-//ground.translateX(-1500);
-/********************
-  RENDER SETTINGS
-*********************/
+///////////////////////////////////////////////////////////////////////////////
+ //                  RENDER SETTINGS
+///////////////////////////////////////////////////////////////////////////////
 var renderer = initRenderer(); 
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.antialias = true;
 
-
-
-/********************
-  LIGHTING SETTINGS
-*********************/
+///////////////////////////////////////////////////////////////////////////////
+ // LIGHTING SETTINGS
+///////////////////////////////////////////////////////////////////////////////
 const hemLight = new THREE.HemisphereLight( 0xffffbb, 0x080820, 0.3 );
 hemLight.castShadow = false;
 scene.add(hemLight);  
@@ -88,30 +75,15 @@ scene.add(dirLight);
 createLightSphere(scene,100,20,20,sunPos);
 initDefaultBasicLight(sceneInsp);
 
-/********************
-  CAMERA SETTINGS
-*********************/
+///////////////////////////////////////////////////////////////////////////////
+//  INSPECTION CAMERA SETTINGS
+///////////////////////////////////////////////////////////////////////////////
 
-var originVec = new THREE.Vector3( 0.0, 0.0, 0.0 );
-var upVec = new THREE.Vector3( 0.0, 1.0, 0.0 );
-var vcWidth = 400; // virtual camera width
-var vcHeidth = 300; // virtual camera height
-var virtualCameraI = new THREE.PerspectiveCamera(60, vcWidth/vcHeidth, 1.0, mapSize*5);
-
-virtualCameraI.lookAt(originVec);
-virtualCameraI.position.set(0,20 ,-50);
-  
-virtualCameraI.up = upVec;
-
-
-/*****************************************/
-
-// Main camera
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000000);
   camera.lookAt(0, 0, 0.2);
   camera.position.set(-10000,10000,200)
   camera.up.set( 0,1, 0, );
-/********************************* */
+
 
 // Enable mouse rotation, pan, zoom etc.
 var trackballControls = new TrackballControls(camera, renderer.domElement );
@@ -120,16 +92,17 @@ var trackballControls = new TrackballControls(camera, renderer.domElement );
 var axesHelper = new THREE.AxesHelper( 1000000 );
 scene.add( axesHelper );
 sceneInsp.add(axesHelper);
-// create first cube
+
+///////////////////////////////////////////////////////////////////////////////
+// create auxiliar cube
+///////////////////////////////////////////////////////////////////////////////
+
 var cubeGeometry = new THREE.BoxGeometry(1000, 1000, 1000);
 var cubeMaterial = new THREE.MeshBasicMaterial({wireframe:false, transparent:true, opacity:0.0});
 var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-// position the first cube
 cube.position.set(0.0, 1000, 0);
-// add the fisrt cube to the scene
 scene.add(cube);
 
-cube.add(virtualCameraI);
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////// AIRPLANE ASSEMBLY ///////////////////////////////
@@ -202,15 +175,12 @@ rightLandingGear.rotateX(degreesToRadians(-15));
 rightLandingGear.rotateZ(degreesToRadians(15));
 airplane.add(rightLandingGear);
 
-// airplane.rotateZ(degreesToRadians(-90));
-// airplane.rotateY(degreesToRadians(-90));
 airplane.rotateX(degreesToRadians(-90));
 airplane.rotateZ(degreesToRadians(180));
 airplane.translateY(50);
-// airplane.translateZ(-50);
 
 ///////////////////////////////////////////////////////////////////////////////
-///////////////////////////// AIRPLANE ASSEMBLY ///////////////////////////////
+//////////////////////// INSPECTION AIRPLANE ASSEMBLY /////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
 var airplaneInspection = createFuselage(sceneInsp);
@@ -280,24 +250,19 @@ rightLandingGear2.rotateX(degreesToRadians(-15));
 rightLandingGear2.rotateZ(degreesToRadians(15));
 airplaneInspection.add(rightLandingGear2);
 
-// airplane.rotateZ(degreesToRadians(-90));
-// airplane.rotateY(degreesToRadians(-90));
 airplaneInspection.rotateX(degreesToRadians(-90));
 airplaneInspection.rotateZ(degreesToRadians(180));
 airplaneInspection.translateY(50);
-// airplane.translateZ(-50);
-
-cube.add(virtualCameraI);
-
 
 
 sceneInsp.add(airplaneInspection);
 airplaneInspection.scale.set(200,200,200);
 airplaneInspection.visibile= false;
 
-//-------------------------------------------------------------------------------
-// Setting virtual camera
-//-------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
+// Simulation Camera Settings
+///////////////////////////////////////////////////////////////////////////////
+
 var lookAtVec2 = new THREE.Vector3( 0.0, 0.0, 70.0 );
 var upVec2 = new THREE.Vector3( 0.0, 0.0, 1.0 );
 var vcWidth2 = 400; // virtual camera width
@@ -308,26 +273,20 @@ virtualCamera.position.set(0,20 ,-50);
   
 virtualCamera.up = upVec2;
 
-// Create helper for the virtual camera
-const cameraHelper = new THREE.CameraHelper(virtualCamera);
-cube.add(cameraHelper);
 cube.add(virtualCamera);
 
 var lookAtVec3 = new THREE.Vector3( 0,10,0 );
 var upVec3 = new THREE.Vector3( 0.0, 1.0, 1.0 );
 
+///////////////////////////////////////////////////////////////////////////////
+// Cockpit  camera settings
+///////////////////////////////////////////////////////////////////////////////
 var virtualCameraPilot = new THREE.PerspectiveCamera(45, vcWidth2/vcHeidth2, 1.0, 1000000);
 virtualCameraPilot.lookAt(lookAtVec3);
 virtualCameraPilot.position.set(0,-5 ,10);
-  
 virtualCameraPilot.up = upVec3;
-
-
 airplane.add(virtualCameraPilot);
 
-// Create helper for the virtual camera
-const cameraHelperPilot = new THREE.CameraHelper(virtualCameraPilot);
-airplane.add(cameraHelperPilot);
 
 function updateCamera2(){
   //-- Update virtual camera position --
@@ -337,10 +296,17 @@ function updateCamera2(){
 
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// reescale objects
+///////////////////////////////////////////////////////////////////////////////
 
 cube.scale.set(200,200,200);
 cube.translateY(1850);
 cube.position.set(1.1*mapSize, cube.position.y, -1.35*mapSize);
+
+///////////////////////////////////////////////////////////////////////////////
+//Create Checkpoints
+///////////////////////////////////////////////////////////////////////////////
 
 function createCheckPoint(vec){
   
@@ -373,11 +339,10 @@ function getRandomInt(min, max){
   return Math.floor(Math.random() * (max - min + 2000) ) + min; 
 }
 
-
 function createVectors(){
   var airplaneInitialPosition = new THREE.Vector3(1.1*mapSize, 2200,-mapSize);
   var vectors = [];
-  var numberOfPoints = 2;
+  var numberOfPoints = 13;
 
   vectors.push(airplaneInitialPosition);
   for (let point = 0; point < numberOfPoints-1; point++) {
@@ -388,14 +353,12 @@ function createVectors(){
     vectors.push(vector);
     
   }
-  //vectors.push(airplaneInitialPosition);
+  vectors.push(airplaneInitialPosition);
   return vectors
 }
  var pointsPositions = createVectors();
 
 var checkPointsPositions = pointsPositions;
-
-
 
 var checkpoints = checkPointsPositions.map(x => createCheckPoint(x));
 for (var i=0; i<checkpoints.length; i++){
@@ -407,8 +370,10 @@ for (var i=0; i<checkpoints.length; i++){
 for (i=1; i<checkpoints.length; i++){
   checkpoints[i].visible= false;
 }
-
+///////////////////////////////////////////////////////////////////////////////
 //Create a closed wavey loop
+///////////////////////////////////////////////////////////////////////////////
+
 const curve = new THREE.CatmullRomCurve3( checkPointsPositions);
 const points = curve.getPoints( 250 );
 const geometry = new THREE.BufferGeometry().setFromPoints( points );
@@ -419,40 +384,42 @@ const curveObject = new THREE.Line( geometry, material );
 scene.add(curveObject);
 
 var clock = new THREE.Clock(false);
-var atual = 0;
-function namefunction(atual){
-  console.log(typeof(atual));
-  
-  score.innerText = (`Score: ${atual}`);
-  if(atual == "Fim de caminho") return atual;
-  //console.log(clock.getElapsedTime());
-  if (cube.position.x >= checkPointsPositions[atual].x-5000 && cube.position.x <=checkPointsPositions[atual].x + 5000){
+var currentCheckpoint = 0;
 
-    if (cube.position.y >= checkPointsPositions[atual].y - 5000 && cube.position.y <= checkPointsPositions[atual].y + 5000){
+///////////////////////////////////////////////////////////////////////////////
+// check if the plane crossed the checkpoint 
+///////////////////////////////////////////////////////////////////////////////
+function checkPosition(currentCheckpoint){
+  
+  score.innerText = (`Score: ${currentCheckpoint}`);
+  if(currentCheckpoint == "Fim de caminho") return currentCheckpoint;
+
+  if (cube.position.x >= checkPointsPositions[currentCheckpoint].x-5000 && cube.position.x <=checkPointsPositions[currentCheckpoint].x + 5000){
+
+    if (cube.position.y >= checkPointsPositions[currentCheckpoint].y - 5000 && cube.position.y <= checkPointsPositions[currentCheckpoint].y + 5000){
       
-      if (cube.position.z + 8000>=checkPointsPositions[atual].z - 5000 && cube.position.z + 8000 <= checkPointsPositions[atual].z + 5000){
-        if (atual == 0){
+      if (cube.position.z + 8000>=checkPointsPositions[currentCheckpoint].z - 5000 && cube.position.z + 8000 <= checkPointsPositions[currentCheckpoint].z + 5000){
+        if (currentCheckpoint == 0){
           clock.start();
         }
-        checkpoints[atual].visible=  false;
-        if (atual == checkpoints.length - 1){
+        checkpoints[currentCheckpoint].visible=  false;
+        if (currentCheckpoint == checkpoints.length - 1){
           clock.stop();
-          atual = "Fim de caminho";
-          return atual;
+          currentCheckpoint = "Fim de caminho";
+          return currentCheckpoint;
         }
         
-        checkpoints[atual+1].visible = true;
+        checkpoints[currentCheckpoint+1].visible = true;
         
         
-        atual+=1;
+        currentCheckpoint+=1;
       }
     }
   }
-  return atual;
+  return currentCheckpoint;
 }
 
-const timer = document.querySelector(".timer");
-const score = document.querySelector(".score");
+
 
 
 /********************
@@ -481,7 +448,8 @@ loadCactusRandom(numTrees,mapSize);
 //updateCamera();
 render();
 
-/************************************************************************************************************************/
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 /********************
   IMPORTING
@@ -748,7 +716,7 @@ function updateCamera(){
      
 }
 
-function controlledRender(){
+function controlledRender(){ //Simulation Mode
   var width = window.innerWidth;
   var height = window.innerHeight;
 
@@ -760,7 +728,7 @@ function controlledRender(){
   renderer.render(scene, virtualCamera);  
 }
 
-function controlledRenderCockpit(){
+function controlledRenderCockpit(){ //Cockpit Mode
   var width = window.innerWidth;
   var height = window.innerHeight;
 
@@ -771,17 +739,9 @@ function controlledRenderCockpit(){
   renderer.clear();   // Clean the window
   renderer.render(scene, virtualCameraPilot);   
 
-  // // Set virtual camera viewport 
-  // var offset = 20; 
-  // renderer.setViewport(25, 500, 300, 300);  // Set virtual camera viewport  
-  // renderer.setScissor(25, 500, 300, 300); // Set scissor with the same size as the viewport
-  // renderer.setScissorTest(true); // Enable scissor to paint only the scissor are (i.e., the small viewport)
-  // renderer.setClearColor("rgb(60, 50, 150)");  // Use a darker clear color in the small viewport 
-  // renderer.clear(); // Clean the small viewport
-  // renderer.render(scene, camera);  // Render scene of the virtual camera
 }
 
-function controlledRenderInspection(){
+function controlledRenderInspection(){ //Inspection Mode
   var width = window.innerWidth;
   var height = window.innerHeight;
 
@@ -792,9 +752,6 @@ function controlledRenderInspection(){
   renderer.clear();   // Clean the window
   renderer.render(sceneInsp, camera);   
 }
-
-
-
 
 function renderSimulation(){
   timer.innerText = (`Cronômetro: ${clock.getElapsedTime().toFixed(2)}`);
@@ -819,7 +776,7 @@ function renderSimulation(){
     camera,
     cube
   );
-  atual = namefunction(atual);
+  currentCheckpoint = checkPosition(currentCheckpoint);
   infoOnScreen.add("Speed: " + output.speedOnScreen + " kt");
   infoOnScreen.add(
     "Roll Angle: " + radiansToDegrees(-output.rollAngle).toFixed(2) + "º"
@@ -829,8 +786,6 @@ function renderSimulation(){
   );
   infoOnScreen.add("Altitude: " + output.altitude.toFixed(2) + "ft");
   infoOnScreen.show();
-
-
 
   requestAnimationFrame(render);
 }
@@ -858,7 +813,7 @@ function renderSimulationCockpit(){
     camera,
     cube
   );
-  atual = namefunction(atual);
+  currentCheckpoint = checkPosition(currentCheckpoint);
   infoOnScreen.add("Speed: " + output.speedOnScreen + " kt");
   infoOnScreen.add(
     "Roll Angle: " + radiansToDegrees(-output.rollAngle).toFixed(2) + "º"
