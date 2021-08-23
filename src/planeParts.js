@@ -14,8 +14,8 @@ export function createFuselage(cube){
 
     var fuselageMaterial = new THREE.MeshPhongMaterial({
       color:'rgb(100,0,255)',
-      //emissive:'0x0',
-      specular:'0x111111',
+      //emissive:'#000000',
+      specular:'#111111',
       shininess:57,
       flatShading:false,
       reflectivity:1,
@@ -93,8 +93,8 @@ export function createFuselage(cube){
     wingGeometry.rotateX(degreesToRadians(180));
     const wingMaterial = new THREE.MeshPhongMaterial({
       color:'rgb(255,100,0)',
-      //emissive:'0x0',
-      specular:'0x111111',
+      //emissive:'#000000',
+      specular:'#111111',
       shininess:57,
       flatShading:false,
       reflectivity:1,
@@ -127,10 +127,10 @@ export function createFuselage(cube){
       depthWrite: true,
       alphaTest: 0,
       visible: true,
-      side: THREE.frontSide,
+      side: THREE.FrontSide,
       color:'rgb(92,86,92)',
-      emissive:'0x0',
-      specular:'0xffffff',
+      emissive:'#000000',
+      specular:'#ffffff',
       shininess:57,
       flatShading:true,
       reflectivity:1,
@@ -151,10 +151,10 @@ export function createFuselage(cube){
       depthWrite: true,
       alphaTest: 0,
       visible: true,
-      side: THREE.frontSide,
+      side: THREE.FrontSide,
       color:'rgb(92,86,92)',
-      emissive:'0x0',
-      specular:'0xffffff',
+      emissive:'#000000',
+      specular:'#ffffff',
       shininess:57,
       flatShading:true,
       reflectivity:1,
@@ -179,8 +179,8 @@ export function createFuselage(cube){
     var propellerBaseGeometry = new THREE.CylinderGeometry(0, 1.5, 5,32);
     var propellerBaseMaterial = new THREE.MeshPhongMaterial({
       color:'rgb(255,100,0)',
-      //emissive:'0x0',
-      specular:'0x111111',
+      //emissive:'#000000',
+      specular:'#111111',
       shininess:57,
       flatShading:false,
       reflectivity:1,
@@ -197,8 +197,8 @@ export function createFuselage(cube){
     var propellerGeometry = new THREE.CylinderGeometry(0.05, 0.2, 10,4);
     var propellerMaterial = new THREE.MeshPhongMaterial({
       color:'rgb(0,0,255)',
-      //emissive:'0x0',
-      specular:'0x111111',
+      //emissive:'#000000',
+      specular:'#111111',
       shininess:57,
       flatShading:false,
       reflectivity:1,
@@ -259,8 +259,8 @@ export function createFuselage(cube){
     vStabilizerGeometry.rotateY(degreesToRadians(-90));
     const vStabilizerMaterial = new THREE.MeshPhongMaterial( {
       color:'rgb(255,100,0)',
-      //emissive:'0x0',
-      specular:'0x111111',
+      //emissive:'#000000',
+      specular:'#111111',
       shininess:57,
       flatShading:false,
       reflectivity:1,
@@ -299,8 +299,8 @@ export function createFuselage(cube){
     hStabilizerGeometry.rotateX(degreesToRadians(180));
     const hStabilizerMaterial = new THREE.MeshPhongMaterial( {
       color:'rgb(255,100,0)',
-      //emissive:'0x0',
-      specular:'0x111111',
+      //emissive:'#000000',
+      specular:'#111111',
       shininess:57,
       flatShading:false,
       reflectivity:1,
@@ -326,8 +326,8 @@ export function createFuselage(cube){
     var aileronGeometry = new THREE.BoxGeometry(0.25, 1.5, 13.5);
     var aileronMaterial = new THREE.MeshPhongMaterial({
       color:'rgb(100,0,255)',
-      //emissive:'0x0',
-      specular:'0x111111',
+      //emissive:'#000000',
+      specular:'#111111',
       shininess:57,
       flatShading:false,
       reflectivity:1,
@@ -348,8 +348,8 @@ export function createFuselage(cube){
     var elevatorGeometry = new THREE.BoxGeometry(0.25, 1.5, 6);
     var elevatorMaterial = new THREE.MeshPhongMaterial({
       color:'rgb(100,0,255)',
-      //emissive:'0x0',
-      specular:'0x111111',
+      //emissive:'#000000',
+      specular:'#111111',
       shininess:57,
       flatShading:false,
       reflectivity:1,
@@ -368,8 +368,8 @@ export function createFuselage(cube){
     var lgearGeometry = new THREE.CylinderGeometry(0.5,0.5,8,32);
     var lgearMaterial = new THREE.MeshPhongMaterial({
       color:'rgb(100,0,255)',
-      //emissive:'0x0',
-      specular:'0x111111',
+      //emissive:'#000000',
+      specular:'#111111',
       shininess:57,
       flatShading:false,
       reflectivity:1,
@@ -379,10 +379,10 @@ export function createFuselage(cube){
     //scene.add(lgear);
   
     var protectionGeometry = new THREE.CylinderGeometry(1.2,1.2,1.5,32,1,true,0,3)
-    var protectionMaterial = new THREE.MeshBasicMaterial({
+    var protectionMaterial = new THREE.MeshPhongMaterial({
       color:'rgb(255,100,0)',
-      //emissive:'0x0',
-      specular:'0x111111',
+      //emissive:'#000000',
+      specular:'#111111',
       shininess:57,
       flatShading:false,
       reflectivity:1,
@@ -398,11 +398,11 @@ export function createFuselage(cube){
     var wheelGeometry = new THREE.TorusGeometry(0.8,0.4, 32,32);
     var wheelMaterial = new THREE.MeshLambertMaterial({
       color:'rgb(30,30,30)',
-      emissive:'0x191414',
-      //specular:'0x111111',
+      emissive:'#191414',
+      //specular:'#111111',
       // shininess:57,
       // flatShading:true,
-      envMaps: 'reflection',
+      //envMaps: 'reflection',
       reflectivity:1,
       refractionRatio:1,
       side:THREE.DoubleSide
@@ -423,3 +423,83 @@ export function createFuselage(cube){
   }
   
   
+export function airplaneAssembly (cube, inspection){
+
+  var airplane = createFuselage(cube);
+  var propeller = createPropeller(cube);
+  propeller.position.set(0, 23.5, 0);
+  airplane.add(propeller);
+
+  var leftwing = createWings().leftWing;
+  var rightwing = createWings().rightWing;
+  leftwing.position.set(-4, 2, 0);
+  leftwing.rotateY(degreesToRadians(7));
+  rightwing.position.set(4, 2, 0);
+  rightwing.rotateY(degreesToRadians(-7));
+
+  var leftaileron = createAileron();
+  var rightaileron = createAileron();
+  leftaileron.position.set(13, -2.5, 0);
+  leftaileron.rotateZ(degreesToRadians(9));
+  leftwing.add(leftaileron);
+
+  rightaileron.position.set(13, -2.5, 0);
+  rightaileron.rotateZ(degreesToRadians(9));
+  rightwing.add(rightaileron);
+  airplane.add(leftwing);
+  airplane.add(rightwing);
+
+  var cockpit = createCockpit(cube);
+  cockpit.position.set(0, 8, 5);
+  airplane.add(cockpit);
+
+  var stabilizer = createStabilizer(cube);
+  stabilizer.position.set(0.5, -17.065, 3.5);
+  airplane.add(stabilizer);
+
+  var leftelevator = createElevator();
+  var rightelevator = createElevator();
+  leftelevator.rotateZ(degreesToRadians(-9));
+  leftelevator.position.set(-8, -0.75, 1);
+  stabilizer.add(leftelevator);
+
+  rightelevator.rotateZ(degreesToRadians(9));
+  rightelevator.position.set(7, -0.75, 1);
+  stabilizer.add(rightelevator);
+
+  var rudder = createElevator();
+  rudder.rotateY(degreesToRadians(90));
+  rudder.rotateZ(degreesToRadians(-2));
+  rudder.position.set(-0.5, -3, 2.5);
+  stabilizer.add(rudder);
+  airplane.position.set(0, 0, 9.6);
+
+  var frontLandingGear = createLandingGear();
+  var leftLandingGear = createLandingGear();
+  var rightLandingGear = createLandingGear();
+
+  frontLandingGear.position.set(0, 8, -4);
+  frontLandingGear.rotateX(degreesToRadians(15));
+  airplane.add(frontLandingGear);
+
+  leftLandingGear.position.set(-2, -8, -4);
+  leftLandingGear.rotateX(degreesToRadians(-15));
+  leftLandingGear.rotateZ(degreesToRadians(-15));
+  airplane.add(leftLandingGear);
+
+  rightLandingGear.position.set(2, -8, -4);
+  rightLandingGear.rotateX(degreesToRadians(-15));
+  rightLandingGear.rotateZ(degreesToRadians(15));
+  airplane.add(rightLandingGear);
+
+  airplane.rotateX(degreesToRadians(-90));
+  airplane.rotateZ(degreesToRadians(180));
+  airplane.translateY(50);
+
+  if (inspection === true){
+    airplane.scale.set(200,200,200);
+    airplane.visibile = false;
+  }
+
+  return ({airplane, propeller});
+}

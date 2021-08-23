@@ -16,7 +16,169 @@ import {initRenderer,
 var mapSize = 70000;
 //loadBasePlane(mapSize);
 
+export function loadCactusRandom(numTrees, mapSize, scene)
+{
+  var cactusModels = ['cactus01','cactus02','cactus03','cactus04'];
+  var modelPath = '../assets/objects/';
+  
+  for(let i = 0; i<numTrees; i++)
+  {
+    
+    let rands1; //sinal
+    if(Math.random() > 0.5)
+      rands1 = -1;
+    else
+      rands1 = 1;
+    let rands2; //sinal
+    if(Math.random() > 0.5)
+      rands2 = -1;
+    else
+      rands2 = 1;
+    
+    let randx = Math.random(); //position x
+    let randz = Math.random(); //position z
+    let randr = Math.random(); //rotation 
 
+    let min = 0.9;
+    let randscale = Math.random() + min;
+    
+    let treePosition = new THREE.Vector3(randx*rands1*mapSize,mapSize*(0.0065*Math.sqrt((1-randscale)*(1-randscale))) ,randz*rands2*mapSize);
+    let treeRotation = degreesToRadians(360*randr);
+
+    var modelName = cactusModels[i%4];
+
+    var loader = new GLTFLoader( );
+    loader.load( modelPath + modelName + '.gltf', function ( gltf ) {
+    var obj = gltf.scene;
+    obj.name = modelName;
+    obj.visible = true;
+    obj.traverse( function ( child ) {
+      if ( child ) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+          child.material = new THREE.MeshLambertMaterial({color: 0x8c9444});
+      }
+    });
+    obj.traverse( function( node )
+    {
+
+      if( node.material ) node.material.side = THREE.DoubleSide;
+    });
+
+    scene.add ( obj );
+    obj.translateX(treePosition.x);
+    obj.translateY(treePosition.y);
+    obj.translateZ(treePosition.z);
+
+    obj.rotateOnAxis(new THREE.Vector3(0,1,0),  treeRotation );
+
+    let proportionalScale = (mapSize/750);
+
+    obj.scale.set(randscale*(proportionalScale - 1)*1.3, randscale*proportionalScale, randscale*proportionalScale*1.3);
+    obj.translateY(-700);
+    //obj.position.set(treePosition);
+    
+    }, onProgress, onError);
+
+  }
+}
+
+
+export function loadMountains(mapSize, scene)
+{
+  var modelPath = '../assets/objects/';
+  var mountainModels = ['mountain01','mountain02','mountain01']
+  var mountainPositions = [ new THREE.Vector3( 0 ,           mapSize/14,     mapSize/10), 
+                            new THREE.Vector3(-2*mapSize/3,  mapSize/21,  -2*mapSize/3),
+                            new THREE.Vector3( 2*mapSize/3,  mapSize/24,  -2*mapSize/3)];
+  var mountainScales = [1.8,1.4,1.0];
+
+  for(let i=0; i<3; i++)
+  {
+    let modelName = mountainModels[i];
+    let mountainPosition = mountainPositions[i];
+    let mountainScale = mountainScales[i];
+
+    var loader = new GLTFLoader( );
+    loader.load( modelPath + modelName + '.gltf', function ( gltf ) {
+    var obj = gltf.scene;
+    obj.name = modelName;
+    obj.visible = true;
+    obj.traverse( function ( child ) {
+      if ( child ) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+          child.material = new THREE.MeshLambertMaterial({color: 0xcc692b});
+
+      }
+    });
+    obj.traverse( function( node )
+    {
+
+      //if( node.material ) node.material.side = THREE.DoubleSide;
+    });
+
+    scene.add ( obj );
+    obj.translateX(mountainPosition.x);
+    obj.translateY(mountainPosition.y);
+    obj.translateZ(mountainPosition.z);
+
+    //obj.rotateOnAxis(new THREE.Vector3(0,1,0),  treeRotation );
+    obj.clipShadows = true;
+    
+
+    var sizeAdjust = mapSize*7/9000;
+    obj.translateY(-900);
+
+    obj.scale.set(sizeAdjust*mountainScale,sizeAdjust*mountainScale,sizeAdjust*mountainScale);
+  }, onProgress, onError);
+ 
+  }
+}
+
+export function loadBasePlane(mapSize, scene)
+{
+  var modelPath = '../assets/objects/';
+
+  var mountainPositions = [new THREE.Vector3(0,0,mapSize/10), 
+                          new THREE.Vector3(-2*mapSize/3,0,-2*mapSize/3),
+                          new THREE.Vector3(2*mapSize/3,0,-2*mapSize/3)];
+  var mountainScales = [1.7,1.4,1.0];
+
+  let modelName = 'basePlaneIrregular';
+  let basePlaneScale = mapSize/100;
+
+  var loader = new GLTFLoader( );
+  loader.load( modelPath + modelName + '.gltf', function ( gltf ) {
+  var obj = gltf.scene;
+  obj.name = modelName;
+  obj.visible = true;
+  obj.traverse( function ( child ) {
+    if ( child ) {
+        child.castShadow = false;
+        child.receiveShadow = true;
+        child.material = new THREE.MeshPhongMaterial({color: 0xda9a52});
+
+    }
+  });
+  obj.traverse( function( node )
+  {
+
+    if( node.material ) node.material.side = THREE.DoubleSide;
+  });
+
+  scene.add ( obj );
+
+
+  obj.clipShadows = true;
+  
+
+  obj.scale.set(basePlaneScale*100,basePlaneScale/5,basePlaneScale*100);
+  obj.translateY(-1000);
+}, onProgress, onError);
+
+
+}
 
 export function loadGLTFFile(modelPath, modelName, visibility, desiredScale, myObj)
 {
@@ -72,35 +234,4 @@ export function fixPosition(obj)
   else
     obj.translateY(-1*box.min.y);
   return obj;
-}
-
-/********************
-  LIGHTING
-*********************/
-
-export function setDirectionalLighting(position,intensity)
-{
-  var dirLight = new THREE.DirectionalLight("rgb(255,255,255)",intensity);
-  dirLight.translateX(position.x);
-  dirLight.translateY(position.y);
-  dirLight.translateZ(position.z);
-  dirLight.shadow.mapSize.width = 2048;
-  dirLight.shadow.mapSize.height = 2048;
-  dirLight.castShadow = true;
-  
-  dirLight.decay = 2;
-  dirLight.penumbra = 0.5;
-
-  dirLight.shadow.camera.position.set = position;
-  dirLight.shadow.camera.left = -mapSize;
-  dirLight.shadow.camera.right = mapSize;
-  dirLight.shadow.camera.top = mapSize;
-  dirLight.shadow.camera.bottom = - mapSize;
-  dirLight.shadow.camera.near = .2;    
-  dirLight.shadow.camera.far = 10*mapSize;        
-
-  dirLight.name = "Direction Light";
-  dirLight.visible = true;
-  
-  return dirLight;
 }
