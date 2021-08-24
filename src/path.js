@@ -39,7 +39,8 @@ import {renderSimulation,
         renderSimulationCockpit,
         initParameters } from "./rendering.js";
 
-
+        
+const score = document.querySelector(".score"); //Show score
 //////////////////////////////////////////////////////////////////////////////
 //Create Checkpoints
 ///////////////////////////////////////////////////////////////////////////////
@@ -99,9 +100,9 @@ function createVectors(mapSize){
 export function createPath(scene, mapSize){
   var pointsPositions = createVectors(mapSize);
 
-  var checkPointsPositions = pointsPositions;
-
-  var checkpoints = checkPointsPositions.map(x => createCheckPoint(x));
+  window.checkPointsPositions = pointsPositions;
+  
+  window.checkpoints = checkPointsPositions.map(x => createCheckPoint(x));
   for (var i=0; i<checkpoints.length; i++){
     if (i != checkpoints.length-1){
       //checkpoints[i].rotateY((Math.asin( (checkpoints[i+1].position.y - checkpoints[i].position.y)/(Math.sqrt(Math.pow((checkpoints[i+1].position.y - checkpoints[i].position.y), 2 ) + Math.pow( (checkpoints[i+1].position.x - checkpoints[i].position.x), 2 )  )) )));
@@ -125,4 +126,36 @@ export function createPath(scene, mapSize){
   scene.add(curveObject);
 
   
+}
+
+
+
+export function checkPosition(currentCheckpoint){
+  
+  score.innerText = (`Score: ${currentCheckpoint}`);
+  if(currentCheckpoint == "Fim de caminho") return currentCheckpoint;
+
+  if (cube.position.x >= checkPointsPositions[currentCheckpoint].x-5000 && cube.position.x <=checkPointsPositions[currentCheckpoint].x + 5000){
+
+    if (cube.position.y >= checkPointsPositions[currentCheckpoint].y - 5000 && cube.position.y <= checkPointsPositions[currentCheckpoint].y + 5000){
+      
+      if (cube.position.z + 8000>=checkPointsPositions[currentCheckpoint].z - 5000 && cube.position.z + 8000 <= checkPointsPositions[currentCheckpoint].z + 5000){
+        if (currentCheckpoint == 0){
+          clock.start();
+        }
+        checkpoints[currentCheckpoint].visible=  false;
+        if (currentCheckpoint == checkpoints.length - 1){
+          clock.stop();
+          currentCheckpoint = "Fim de caminho";
+          return currentCheckpoint;
+        }
+        
+        checkpoints[currentCheckpoint+1].visible = true;
+        
+        
+        currentCheckpoint+=1;
+      }
+    }
+  }
+  return currentCheckpoint;
 }

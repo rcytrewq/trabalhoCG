@@ -34,12 +34,16 @@ import {createSimulationCamera,
         createCockpitCamera,
         createInspectionCamera} from "./cameras.js";
 import { createSun } from "./lighting.js";
+import { checkPosition } from "./path.js";
 
 // To use the keyboard
 var keyboard = new KeyboardState();
 var simulationMode = true; // Alterna entre os modos de simulação e inspeção
 var cockpitMode = false; // Ativa e desativa o modo cockpit
 const timer = document.querySelector(".timer"); //Show timer
+
+var currentCheckpoint =0;
+//const timer = document.querySelector(".timer"); //Show timer
 
 
 function controlledRender(simulationCamera, scene){ //Simulation Mode
@@ -132,7 +136,7 @@ export function renderSimulation(){
     assembledAirplane.airplane,
     cube
   );
-  //currentCheckpoint = checkPosition(currentCheckpoint);
+  currentCheckpoint = checkPosition(currentCheckpoint);
   infoOnScreen.add("Speed: " + output.speedOnScreen + " kt");
   infoOnScreen.add(
     "Roll Angle: " + radiansToDegrees(-output.rollAngle).toFixed(2) + "º"
@@ -163,7 +167,7 @@ export function renderSimulationCockpit(){
     assembledAirplane.airplane,
     cube
   );
-  // currentCheckpoint = checkPosition(currentCheckpoint);
+  currentCheckpoint = checkPosition(currentCheckpoint);
   infoOnScreen.add("Speed: " + output.speedOnScreen + " kt");
   infoOnScreen.add(
     "Roll Angle: " + radiansToDegrees(-output.rollAngle).toFixed(2) + "º"
@@ -178,6 +182,7 @@ export function renderSimulationCockpit(){
 
   requestAnimationFrame(render);
 }
+
 
 
 
