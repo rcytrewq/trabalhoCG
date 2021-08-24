@@ -1,20 +1,8 @@
 import * as THREE from  '../build/three.module.js';
-import {GUI} from       '../build/jsm/libs/dat.gui.module.js';
-import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
-import {ConvexGeometry} from '../build/jsm/geometries/ConvexGeometry.js';
-import KeyboardState from '../libs/util/KeyboardState.js';
 import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js';
-import {OBJLoader} from '../build/jsm/loaders/OBJLoader.js';
-import {MTLLoader} from '../build/jsm/loaders/MTLLoader.js';
-import {initRenderer, 
-        InfoBox,
-        onWindowResize, 
-        degreesToRadians,
-        getMaxSize,
-        createLightSphere} from "../libs/util/util.js";
+import {degreesToRadians,
+        getMaxSize} from "../libs/util/util.js";
 
-var mapSize = 70000;
-//loadBasePlane(mapSize);
 
 export function loadCactusRandom(numTrees, mapSize, scene)
 {
@@ -84,6 +72,7 @@ export function loadCactusRandom(numTrees, mapSize, scene)
 }
 
 
+
 export function loadMountains(mapSize, scene)
 {
   var modelPath = '../assets/objects/';
@@ -136,6 +125,8 @@ export function loadMountains(mapSize, scene)
   }
 }
 
+
+
 export function loadBasePlane(mapSize, scene)
 {
   var modelPath = '../assets/objects/';
@@ -177,8 +168,9 @@ export function loadBasePlane(mapSize, scene)
   obj.translateY(-1000);
 }, onProgress, onError);
 
-
 }
+
+
 
 export function loadGLTFFile(modelPath, modelName, visibility, desiredScale, myObj)
 {
@@ -207,7 +199,11 @@ export function loadGLTFFile(modelPath, modelName, visibility, desiredScale, myO
     }, onProgress, onError);
 }
 
+
+
 export function onError() { };
+
+
 
 export function onProgress ( xhr, model ) {
     if ( xhr.lengthComputable ) {
@@ -215,6 +211,8 @@ export function onProgress ( xhr, model ) {
 
     }
 }
+
+
 
 export function normalizeAndRescale(obj, newScale)
 {
@@ -224,6 +222,8 @@ export function normalizeAndRescale(obj, newScale)
                 newScale * (1.0/scale));
   return obj;
 }
+
+
 
 export function fixPosition(obj)
 {

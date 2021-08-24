@@ -1,50 +1,12 @@
 import * as THREE from "../build/three.module.js";
-import Stats from "../build/jsm/libs/stats.module.js";
-import { TrackballControls } from "../build/jsm/controls/TrackballControls.js";
-import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js';
-import KeyboardState from "../libs/util/KeyboardState.js";
-import {
-  initRenderer,
-  initCamera,
-  InfoBox,
-  onWindowResize,
-  degreesToRadians,
-  radiansToDegrees,
-  initDefaultBasicLight,
-  createGroundPlaneWired,
-  InfoBox2,
-  createLightSphere,
-} from "../libs/util/util.js";
-import {
-  createFuselage,
-  createWings,
-  createCockpit,
-  createPropeller,
-  createStabilizer,
-  createAileron,
-  createLandingGear,
-  createElevator,
-  airplaneAssembly
-} from "./planeParts.js";
+import {  radiansToDegrees,
+          InfoBox2} from "../libs/util/util.js";
 import { rotatePropeller, keyboardUpdate, movement } from "./animations.js";
-import {loadCactusRandom,
-        loadMountains,
-        loadBasePlane } from "./ambient.js";
-import {createSimulationCamera,
-        createCockpitCamera,
-        createInspectionCamera} from "./cameras.js";
-import { createSun } from "./lighting.js";
 import { checkPosition } from "./path.js";
 
-// To use the keyboard
-var keyboard = new KeyboardState();
-var simulationMode = true; // Alterna entre os modos de simulação e inspeção
-var cockpitMode = false; // Ativa e desativa o modo cockpit
 const timer = document.querySelector(".timer"); //Show timer
 
 var currentCheckpoint =0;
-//const timer = document.querySelector(".timer"); //Show timer
-
 
 function controlledRender(simulationCamera, scene){ //Simulation Mode
   var width = window.innerWidth;
@@ -57,6 +19,7 @@ function controlledRender(simulationCamera, scene){ //Simulation Mode
   renderer.clear();   // Clean the window
   renderer.render(scene, simulationCamera);  
 }
+
 
 function controlledRenderInspection(){ //Inspection Mode
   var width = window.innerWidth;
@@ -84,6 +47,7 @@ function controlledRenderCockpit(){ //Cockpit Mode
   renderer.render(scene, cockpitCamera);   
 
 }
+
 
 export function renderInspection(){
   
@@ -118,6 +82,7 @@ export function renderInspection(){
   requestAnimationFrame(render);
 }
 
+
 export function renderSimulation(){
 
   timer.innerText = (`Cronômetro: ${clock.getElapsedTime().toFixed(2)}`);
@@ -150,6 +115,7 @@ export function renderSimulation(){
   requestAnimationFrame(render);
 }
 
+
 export function renderSimulationCockpit(){
   
   assembledAirplane.airplane.visible = true;
@@ -178,11 +144,8 @@ export function renderSimulationCockpit(){
   infoOnScreen.add("Altitude: " + output.altitude.toFixed(2) + "ft");
   infoOnScreen.show();
 
-
-
   requestAnimationFrame(render);
 }
-
 
 
 

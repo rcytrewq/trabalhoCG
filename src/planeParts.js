@@ -1,20 +1,11 @@
 import * as THREE from  '../build/three.module.js';
-import Stats from       '../build/jsm/libs/stats.module.js';
-import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
-import KeyboardState from '../libs/util/KeyboardState.js';
-import {initRenderer, 
-        initCamera,       
-        InfoBox,
-        onWindowResize,
-        degreesToRadians,
-        initDefaultBasicLight} from "../libs/util/util.js";
+import { degreesToRadians } from "../libs/util/util.js";
 
 
-export function createFuselage(cube){
+function createFuselage(cube){
 
     var fuselageMaterial = new THREE.MeshPhongMaterial({
       color:'rgb(100,0,255)',
-      //emissive:'#000000',
       specular:'#111111',
       shininess:57,
       flatShading:false,
@@ -66,7 +57,7 @@ export function createFuselage(cube){
     return fuselage;
   }
 
-  export function createWings(){
+  function createWings(){
 
     //create Wing Shape
     const wingShape = new THREE.Shape();
@@ -93,7 +84,6 @@ export function createFuselage(cube){
     wingGeometry.rotateX(degreesToRadians(180));
     const wingMaterial = new THREE.MeshPhongMaterial({
       color:'rgb(255,100,0)',
-      //emissive:'#000000',
       specular:'#111111',
       shininess:57,
       flatShading:false,
@@ -115,7 +105,7 @@ export function createFuselage(cube){
     return {leftWing, rightWing};
   }
 
-  export function createCockpit(cube){
+  function createCockpit(cube){
 
     // create cockpit
     var cockpitGeometry = new THREE.CylinderGeometry(2.5, 2.5, 5,32);
@@ -173,13 +163,12 @@ export function createFuselage(cube){
     return cockpit;
   }
 
-  export function createPropeller(cube){
+  function createPropeller(cube){
 
     // create propellerBase
     var propellerBaseGeometry = new THREE.CylinderGeometry(0, 1.5, 5,32);
     var propellerBaseMaterial = new THREE.MeshPhongMaterial({
       color:'rgb(255,100,0)',
-      //emissive:'#000000',
       specular:'#111111',
       shininess:57,
       flatShading:false,
@@ -197,7 +186,6 @@ export function createFuselage(cube){
     var propellerGeometry = new THREE.CylinderGeometry(0.05, 0.2, 10,4);
     var propellerMaterial = new THREE.MeshPhongMaterial({
       color:'rgb(0,0,255)',
-      //emissive:'#000000',
       specular:'#111111',
       shininess:57,
       flatShading:false,
@@ -230,7 +218,7 @@ export function createFuselage(cube){
   }
  
   
-  export function createStabilizer(cube){
+  function createStabilizer(cube){
     //create vertical stabilizer shape
   
     const vStabilizerShape = new THREE.Shape();
@@ -259,7 +247,6 @@ export function createFuselage(cube){
     vStabilizerGeometry.rotateY(degreesToRadians(-90));
     const vStabilizerMaterial = new THREE.MeshPhongMaterial( {
       color:'rgb(255,100,0)',
-      //emissive:'#000000',
       specular:'#111111',
       shininess:57,
       flatShading:false,
@@ -299,7 +286,6 @@ export function createFuselage(cube){
     hStabilizerGeometry.rotateX(degreesToRadians(180));
     const hStabilizerMaterial = new THREE.MeshPhongMaterial( {
       color:'rgb(255,100,0)',
-      //emissive:'#000000',
       specular:'#111111',
       shininess:57,
       flatShading:false,
@@ -321,12 +307,11 @@ export function createFuselage(cube){
   }
   
   
-  export function createAileron(){
+  function createAileron(){
     // create first cube
     var aileronGeometry = new THREE.BoxGeometry(0.25, 1.5, 13.5);
     var aileronMaterial = new THREE.MeshPhongMaterial({
       color:'rgb(100,0,255)',
-      //emissive:'#000000',
       specular:'#111111',
       shininess:57,
       flatShading:false,
@@ -343,12 +328,11 @@ export function createFuselage(cube){
   }
   
 
-  export function createElevator(){
+  function createElevator(){
     // create first cube
     var elevatorGeometry = new THREE.BoxGeometry(0.25, 1.5, 6);
     var elevatorMaterial = new THREE.MeshPhongMaterial({
       color:'rgb(100,0,255)',
-      //emissive:'#000000',
       specular:'#111111',
       shininess:57,
       flatShading:false,
@@ -364,11 +348,10 @@ export function createFuselage(cube){
     return elevator;
   }
   
-  export function createLandingGear(){
+  function createLandingGear(){
     var lgearGeometry = new THREE.CylinderGeometry(0.5,0.5,8,32);
     var lgearMaterial = new THREE.MeshPhongMaterial({
       color:'rgb(100,0,255)',
-      //emissive:'#000000',
       specular:'#111111',
       shininess:57,
       flatShading:false,
@@ -381,7 +364,6 @@ export function createFuselage(cube){
     var protectionGeometry = new THREE.CylinderGeometry(1.2,1.2,1.5,32,1,true,0,3)
     var protectionMaterial = new THREE.MeshPhongMaterial({
       color:'rgb(255,100,0)',
-      //emissive:'#000000',
       specular:'#111111',
       shininess:57,
       flatShading:false,
@@ -399,10 +381,6 @@ export function createFuselage(cube){
     var wheelMaterial = new THREE.MeshLambertMaterial({
       color:'rgb(30,30,30)',
       emissive:'#191414',
-      //specular:'#111111',
-      // shininess:57,
-      // flatShading:true,
-      //envMaps: 'reflection',
       reflectivity:1,
       refractionRatio:1,
       side:THREE.DoubleSide

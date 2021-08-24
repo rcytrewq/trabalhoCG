@@ -1,32 +1,11 @@
 import * as THREE from "../build/three.module.js";
 import Stats from "../build/jsm/libs/stats.module.js";
 import { TrackballControls } from "../build/jsm/controls/TrackballControls.js";
-import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js';
 import KeyboardState from "../libs/util/KeyboardState.js";
 import {
   initRenderer,
-  initCamera,
-  InfoBox,
-  onWindowResize,
-  degreesToRadians,
-  radiansToDegrees,
-  initDefaultBasicLight,
-  createGroundPlaneWired,
-  InfoBox2,
-  createLightSphere,
-} from "../libs/util/util.js";
-import {
-  createFuselage,
-  createWings,
-  createCockpit,
-  createPropeller,
-  createStabilizer,
-  createAileron,
-  createLandingGear,
-  createElevator,
-  airplaneAssembly
-} from "./planeParts.js";
-import { rotatePropeller, keyboardUpdate, movement } from "./animations.js";
+  initDefaultBasicLight} from "../libs/util/util.js";
+import {airplaneAssembly} from "./planeParts.js";
 import {loadCactusRandom,
         loadMountains,
         loadBasePlane } from "./ambient.js";
@@ -44,10 +23,12 @@ import { createPath } from "./path.js";
 /********************
         SCENE
 *********************/
-var stats = new Stats(); // To show FPS information
+
+// To show FPS information
+var stats = new Stats(); 
 
 // Create main scene
-var scene = new THREE.Scene();    // Create main scene
+var scene = new THREE.Scene();    
 scene.background = new THREE.Color('rgb(10,10,50)');
 
 // Create main scene
@@ -60,9 +41,8 @@ var mapSize = 70000;
 // To use the keyboard
 var keyboard2 = new KeyboardState();
 
-var simulationMode = true; // Alterna entre os modos de simulação e inspeção
-var cockpitMode = false; // Ativa e desativa o modo cockpit
-
+var simulationMode = true; // switch simulation/inspection modes 
+var cockpitMode = false; // Turn on/off cockpit mode
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -158,18 +138,17 @@ loadCactusRandom(numTrees,mapSize, scene);
   RENDERING
 *********************/
 
-//updateCamera();
 render();
 
 /********************
   LIGHTING
 *********************/
+
 createSun(scene, mapSize);
 initDefaultBasicLight(sceneInsp);
-/********************
-  CAMERA AND RENDERING
-*********************/
 
+
+// Switch cameras
 function keyboardCommands(){
   keyboard2.update();
   
@@ -190,6 +169,7 @@ function keyboardCommands(){
   }
   
 }
+
 
 function render()
 {

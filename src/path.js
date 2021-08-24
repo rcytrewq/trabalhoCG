@@ -1,46 +1,7 @@
 import * as THREE from "../build/three.module.js";
-import Stats from "../build/jsm/libs/stats.module.js";
-import { TrackballControls } from "../build/jsm/controls/TrackballControls.js";
-import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js';
-import KeyboardState from "../libs/util/KeyboardState.js";
-import {
-  initRenderer,
-  initCamera,
-  InfoBox,
-  onWindowResize,
-  degreesToRadians,
-  radiansToDegrees,
-  initDefaultBasicLight,
-  createGroundPlaneWired,
-  InfoBox2,
-  createLightSphere,
-} from "../libs/util/util.js";
-import {
-  createFuselage,
-  createWings,
-  createCockpit,
-  createPropeller,
-  createStabilizer,
-  createAileron,
-  createLandingGear,
-  createElevator,
-  airplaneAssembly
-} from "./planeParts.js";
-import { rotatePropeller, keyboardUpdate, movement } from "./animations.js";
-import {loadCactusRandom,
-        loadMountains,
-        loadBasePlane } from "./ambient.js";
-import {createSimulationCamera,
-        createCockpitCamera,
-        createInspectionCamera} from "./cameras.js";
-import { createSun } from "./lighting.js";
-import {renderSimulation,
-        renderInspection,
-        renderSimulationCockpit,
-        initParameters } from "./rendering.js";
-
         
-const score = document.querySelector(".score"); //Show score
+const score = document.querySelector(".score"); 
+
 //////////////////////////////////////////////////////////////////////////////
 //Create Checkpoints
 ///////////////////////////////////////////////////////////////////////////////
@@ -72,9 +33,11 @@ function createCheckPoint(vec){
   return torus;
 }
 
+
 function getRandomInt(min, max){
   return Math.floor(Math.random() * (max - min + 2000) ) + min; 
 }
+
 
 function createVectors(mapSize){
   var airplaneInitialPosition = new THREE.Vector3(1.1*mapSize, 2200,-mapSize);
@@ -97,6 +60,7 @@ function createVectors(mapSize){
   return vectors
 }
 
+
 export function createPath(scene, mapSize){
   var pointsPositions = createVectors(mapSize);
 
@@ -112,9 +76,10 @@ export function createPath(scene, mapSize){
   for (i=1; i<checkpoints.length; i++){
     checkpoints[i].visible= true;
   }
-  ///////////////////////////////////////////////////////////////////////////////
+
+  /////////////////////////////////////////////////////////////////////////////
   //Create a closed wavey loop
-  ///////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////
 
   const curve = new THREE.CatmullRomCurve3( checkPointsPositions);
   const points = curve.getPoints( 250 );
@@ -127,8 +92,6 @@ export function createPath(scene, mapSize){
 
   
 }
-
-
 
 export function checkPosition(currentCheckpoint){
   
