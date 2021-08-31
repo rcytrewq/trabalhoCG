@@ -1,6 +1,7 @@
 import * as THREE from "../build/three.module.js";
 import KeyboardState from "../libs/util/KeyboardState.js";
 import {degreesToRadians} from "../libs/util/util.js";
+import { rotateSpot, translateSpot } from "./lighting.js";
 
 // To use the keyboard
 var airplanePosition = new THREE.Vector3();
@@ -22,12 +23,14 @@ var animation = true;
 var rollIncrease = 0.05;
 var pitchIncrease = 0.01;
 var yawIncrease = 0.02;
-var increaseSpeed = 0.005;
+var increaseSpeed = 0.00005;
 
 var ZERO = 0.0000000000000000;
 
+var planeSoundEffect = false;
+
 function speedInKnots(speed) {
-  return (speed * 150).toFixed(2);
+  return (speed * 75000).toFixed(2);
 }
 
 
@@ -47,14 +50,15 @@ function rollRight(angle, airplane) {
 }
 
 
-function yawLeft(angle, cube) {
+function yawLeft(angle, cube, light) {
   yawAngle += angle;
   cube.rotateY(angle);
+  translateSpot(angle,angle,0,light);
 }
 
 
-function yawRight(angle, cube) {
-  yawLeft(-angle, cube);
+function yawRight(angle, cube, light) {
+  yawLeft(-angle, cube, light);
 }
 
 
@@ -73,7 +77,7 @@ export function rotatePropeller(propeller) {
   propeller.matrixAutoUpdate = false;
   propeller.matrix.identity();
   if (animation) {
-    propellerAngle += speed;
+    propellerAngle += (speed*100);
     var mat4 = new THREE.Matrix4();
     propeller.matrix.multiply(mat4.makeTranslation(0.0, 23.5, 0.0));
     propeller.matrix.multiply(mat4.makeRotationY(propellerAngle)); // R1
@@ -81,11 +85,19 @@ export function rotatePropeller(propeller) {
 }
 
 
-export function movement(airplane, cube) {
+export function movement(airplane, cube, soundPlane, dirLight) {
   
   keyboard.update();
   cube.translateZ(speed*1000);
-  
+  translateSpot(0,0,speed*1000, dirLight);
+  if (speed>0 && planeSoundEffect === false){
+    soundPlane.play();
+    planeSoundEffect = true;
+  }
+  if (speed<= 0 && planeSoundEffect === true){
+    soundPlane.pause();
+    planeSoundEffect = false;
+  }
   //always keep the angles between -360º and 360º
   if (pitchAngle > 6.28319) pitchAngle -= 6.28;
   if (pitchAngle <= -6.28319) pitchAngle += 6.28;
@@ -111,13 +123,13 @@ export function movement(airplane, cube) {
 }
 
 
-export function keyboardUpdate(cube, airplane) {
+export function keyboardUpdate(cube, airplane, light) {
  
   keyboard.update();  
 
   if (keyboard.pressed("Q")) {
     
-    if (speed <= 0.7){      
+    if (speed <= 0.2){      
       speed += increaseSpeed;      
     }
   }
@@ -144,7 +156,7 @@ export function keyboardUpdate(cube, airplane) {
 
   if (keyboard.pressed("left")) {
     rollLeft(rollIncrease, airplane);
-    yawLeft(yawIncrease,cube);
+    yawLeft(yawIncrease,cube, light);
   } else {
       if (rollAngle > ZERO) {
         rollRight(rollIncrease/2., airplane);
@@ -153,7 +165,7 @@ export function keyboardUpdate(cube, airplane) {
 
   if (keyboard.pressed("right")) {
     rollRight(rollIncrease, airplane);
-    yawRight(yawIncrease, cube);
+    yawRight(yawIncrease, cube, light);
   } else {
       if (rollAngle < ZERO) {
         rollLeft(rollIncrease/2., airplane);

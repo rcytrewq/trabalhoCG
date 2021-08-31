@@ -1,6 +1,7 @@
 import * as THREE from "../../build/three.module.js";
 import { TrackballControls } from "../../build/jsm/controls/TrackballControls.js";
 
+
 /**
  * Get ASCII table code of a given character
  * Use character in uppercase
@@ -100,65 +101,6 @@ export class InfoBox {
   }
 }
 
-export class InfoBox2 {
-  constructor() {
-    this.infoBox2 = document.createElement("div");
-    this.infoBox2.id = "InfoxBox";
-    this.infoBox2.style.padding = "6px 14px";
-    this.infoBox2.style.position = "fixed";
-    this.infoBox2.style.bottom = "0";
-    this.infoBox2.style.left = "0";
-    this.infoBox2.style.backgroundColor = "white";
-    this.infoBox2.style.color = "black";
-    this.infoBox2.style.fontFamily = "sans-serif";
-    this.infoBox2.style.userSelect = "none";
-    this.infoBox2.style.textAlign = "left";
-  }
-
-  addParagraph() {
-    const paragraph = document.createElement("br");
-    this.infoBox2.appendChild(paragraph);
-  }
-
-  add(text) {
-    var textnode = document.createTextNode(text);
-    this.infoBox2.appendChild(textnode);
-    this.addParagraph();
-  }
-
-  show() {
-    document.body.appendChild(this.infoBox2);
-  }
-  hide() {
-    document.body.delete();
-  }
-}
-
-/**
- * ...
- *
- */
-export class SecondaryBox {
-  constructor(defaultText) {
-    this.box = document.createElement("div");
-    this.box.id = "box";
-    this.box.style.padding = "6px 14px";
-    this.box.style.bottom = "0";
-    this.box.style.left = "0";
-    this.box.style.position = "fixed";
-    this.box.style.backgroundColor = "rgba(100,100,255,0.3)";
-    this.box.style.color = "white";
-    this.box.style.fontFamily = "sans-serif";
-    this.box.style.fontSize = "26px";
-
-    this.textnode = document.createTextNode(defaultText);
-    this.box.appendChild(this.textnode);
-    document.body.appendChild(this.box);
-  }
-  changeMessage(newText) {
-    this.textnode.nodeValue = newText;
-  }
-}
 
 /**
  * Do not allow that max is lower then min

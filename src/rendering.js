@@ -1,6 +1,7 @@
 import * as THREE from "../build/three.module.js";
 import {  radiansToDegrees,
-          InfoBox2} from "../libs/util/util.js";
+          initRenderer } from "../libs/util/util.js";
+import { InfoBox2 } from "./assistants.js";
 import { rotatePropeller, keyboardUpdate, movement } from "./animations.js";
 import { checkPosition } from "./path.js";
 
@@ -15,9 +16,11 @@ function controlledRender(simulationCamera, scene){ //Simulation Mode
   // Set main viewport
   renderer.setViewport(0, 0, width, height); // Reset viewport    
   renderer.setScissorTest(false); // Disable scissor to paint the entire window
-  renderer.setClearColor("rgb(80, 70, 170)");    
+  // renderer.setClearColor("rgb(80, 70, 170)");    
   renderer.clear();   // Clean the window
-  renderer.render(scene, simulationCamera);  
+  renderer.render(scene, simulationCamera); 
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap; 
 }
 
 
@@ -30,7 +33,7 @@ function controlledRenderInspection(){ //Inspection Mode
   renderer.setScissorTest(false); // Disable scissor to paint the entire window
   renderer.setClearColor("rgb(80, 70, 170)");    
   renderer.clear();   // Clean the window
-  renderer.render(sceneInsp, inspectionCamera);   
+  renderer.render(sceneInsp, auxiliarCamera);   
 }
 
 
@@ -42,22 +45,33 @@ function controlledRenderCockpit(){ //Cockpit Mode
   // Set main viewport
   renderer.setViewport(0, 0, width, height); // Reset viewport    
   renderer.setScissorTest(false); // Disable scissor to paint the entire window
-  renderer.setClearColor("rgb(80, 70, 170)");    
+  //renderer.setClearColor("rgb(80, 70, 170)");    
   renderer.clear();   // Clean the window
   renderer.render(scene, cockpitCamera);   
 
 }
 
+export function renderLoading(){
+  assembledAirplane.airplane.visible = false;
+  assembledAirplaneInspection.airplane.visible = false;
+  const loader = new THREE.FontLoader();
 
-export function renderInspection(){
+  renderer.clear();
+  stats.update();
   
   
+  axesHelper.visible = false;   
+}
+
+export function renderInspection(soundPlane, spotLight1){
+  soundPlane.pause();
+  spotLight1.position.set(auxiliarCamera.position.x,auxiliarCamera.position.y, auxiliarCamera.position.z);
   assembledAirplane.airplane.visible = false;
   assembledAirplaneInspection.airplane.visible = true;
   
   renderer.clear();
   stats.update();
-  scene.background = new THREE.Color("rgb(220,220,220)");
+  sceneInsp.background = new THREE.Color("rgb(0,0,0)");
   
   axesHelper.visible = true;
   var infoOnScreen = new InfoBox2();
@@ -76,32 +90,31 @@ export function renderInspection(){
   );
   infoOnScreen.add("Altitude: " + output.altitude.toFixed(2) + "ft");
   infoOnScreen.show();
-
-
-
   requestAnimationFrame(render);
 }
 
 
-export function renderSimulation(){
+export function renderSimulation(soundCp, soundFinish, soundPlane, dirLight){
 
   timer.innerText = (`Cronômetro: ${clock.getElapsedTime().toFixed(2)}`);
   assembledAirplane.airplane.visible = true;
   assembledAirplaneInspection.airplane.visible = false;
   renderer.clear();
   stats.update();
-  scene.background = new THREE.Color("rgb(0,0,100)");
   axesHelper.visible = true;
   var infoOnScreen = new InfoBox2();
   trackballControls.update();
   controlledRender(simulationCamera, scene);
   rotatePropeller(assembledAirplane.propeller);
-  var output = keyboardUpdate(cube, assembledAirplane.airplane);
+  var output = keyboardUpdate(cube, assembledAirplane.airplane, dirLight);
   movement(
     assembledAirplane.airplane,
-    cube
+    cube,
+    soundPlane,
+    dirLight
   );
-  currentCheckpoint = checkPosition(currentCheckpoint);
+  
+  currentCheckpoint = checkPosition(currentCheckpoint, assembledAirplane.airplane, soundCp, soundFinish);
   infoOnScreen.add("Speed: " + output.speedOnScreen + " kt");
   infoOnScreen.add(
     "Roll Angle: " + radiansToDegrees(-output.rollAngle).toFixed(2) + "º"
@@ -111,29 +124,33 @@ export function renderSimulation(){
   );
   infoOnScreen.add("Altitude: " + output.altitude.toFixed(2) + "ft");
   infoOnScreen.show();
+  const info = document.getElementById("InfoxBox2");
+  info.style.display = "none";
 
   requestAnimationFrame(render);
 }
 
 
-export function renderSimulationCockpit(){
+export function renderSimulationCockpit(soundCp, soundFinish, soundPlane, dirLight){
   
   assembledAirplane.airplane.visible = true;
   assembledAirplaneInspection.airplane.visible = false;
   renderer.clear();
   stats.update();
-  scene.background = new THREE.Color("rgb(0,0,100)");
+  // scene.background = new THREE.Color("rgb(0,0,100)");
   axesHelper.visible = true;
   var infoOnScreen = new InfoBox2();
   trackballControls.update();
   controlledRenderCockpit();
   rotatePropeller(assembledAirplane.propeller);
-  var output = keyboardUpdate(cube, assembledAirplane.airplane);
+  var output = keyboardUpdate(cube, assembledAirplane.airplane, dirLight);
   movement(
     assembledAirplane.airplane,
-    cube
+    cube,
+    soundPlane, 
+    dirLight
   );
-  currentCheckpoint = checkPosition(currentCheckpoint);
+  currentCheckpoint = checkPosition(currentCheckpoint, assembledAirplane.airplane, soundCp, soundFinish);
   infoOnScreen.add("Speed: " + output.speedOnScreen + " kt");
   infoOnScreen.add(
     "Roll Angle: " + radiansToDegrees(-output.rollAngle).toFixed(2) + "º"
@@ -147,6 +164,22 @@ export function renderSimulationCockpit(){
   requestAnimationFrame(render);
 }
 
+export function renderLoadingScreen(){
+  assembledAirplane.airplane.visible = false;
+  assembledAirplaneInspection.airplane.visible = false;
+  renderer.clear();
+  stats.update();
+  var width = window.innerWidth;
+  var height = window.innerHeight;
+
+  // Set main viewport
+  renderer.setViewport(0, 0, width, height); // Reset viewport    
+  renderer.setScissorTest(false); // Disable scissor to paint the entire window
+  renderer.clear();   // Clean the window
+  renderer.render(loadingScene, auxiliarCamera);  
+  
+  requestAnimationFrame(render);
+}
 
 
 export function initParameters(parameters){
@@ -163,8 +196,11 @@ export function initParameters(parameters){
   window.simulationCamera = parameters.simulationCamera;
   window.inspectionCamera = parameters.inspectionCamera;
   window.cockpitCamera = parameters.cockpitCamera;
+  window.auxiliarCamera = parameters.auxiliarCamera;
   window.cube = parameters.cube;
+  window.airplane = parameters.airplane;
   window.render = parameters.render;
   window.sceneInsp = parameters.sceneInsp;
+  window.loadingScene = parameters.loadingScene;
 
 }

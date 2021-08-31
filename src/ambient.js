@@ -4,7 +4,7 @@ import {degreesToRadians,
         getMaxSize} from "../libs/util/util.js";
 
 
-export function loadCactusRandom(numTrees, mapSize, scene)
+export function loadCactusRandom(numTrees, mapSize, scene, loadingManager)
 {
   var cactusModels = ['cactus01','cactus02','cactus03','cactus04'];
   var modelPath = '../assets/objects/';
@@ -73,7 +73,7 @@ export function loadCactusRandom(numTrees, mapSize, scene)
 
 
 
-export function loadMountains(mapSize, scene)
+export function loadMountains(mapSize, scene, loadingManager)
 {
   var modelPath = '../assets/objects/';
   var mountainModels = ['mountain01','mountain02','mountain01']
@@ -127,7 +127,7 @@ export function loadMountains(mapSize, scene)
 
 
 
-export function loadBasePlane(mapSize, scene)
+export function loadBasePlane(mapSize, scene, loadingManager)
 {
   var modelPath = '../assets/objects/';
 

@@ -4,14 +4,48 @@
     <title>Flight Simulator</title>
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../html/resources/default.css">
+    <link rel="stylesheet" href="./loading.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">  
+
+    <style>
+      .timer{
+        font-family: fira-code;
+        position: fixed;
+        top:50px;
+        width:250px;
+        margin-left:50%;
+        transform: translate(-50%,0);
+        text-align: center;
+        z-index: 100;
+        font-size: 20px;
+        color: white;
+
+        background-color: rgba(0,0,0,0.5);
+      }
+      .score{
+        font-family: fira-code;
+        position: fixed;
+        top:100px;
+        width:250px;
+        margin-left:50%;
+        transform: translate(-50%,0);
+        text-align: center;
+        z-index: 100;
+        font-size: 20px;
+        color: white;
+
+        background-color: rgba(0,0,0,0.5);
+      }
+    </style>
 </head>
 
 <body>
+  
   <div id="webgl-output">
     <div class = "timer"></div>
     <div class = "score"></div>
     <script type="module" src="main.js"></script>
+    
   </div>
 </body>
 </html>
